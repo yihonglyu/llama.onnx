@@ -124,6 +124,8 @@ class Llama:
         return outputs
 
     def decode(self, token: np.array):
+        return self.decoder.llama_7b(token)
+        """
         # embed space
         hidden = self.decoder.embed(token)
         assert hidden.shape[-1] == 4096
@@ -174,6 +176,7 @@ class Llama:
 
         hidden = self.decoder.norm_head(hidden)
         return hidden
+        """
 
     def apply_warp(self, tensor: np.array):
         tensor = warp_temperature(tensor, self.config['temperature'])
@@ -263,7 +266,7 @@ def parse_args():
         type=float,
         help='onnxruntime memory pool size. default value is 32GB')
     parser.add_argument('--fp16',
-                        default=True,
+                        default=False,
                         type=bool,
                         help='enable fp16 inference, default True.')
     args = parser.parse_args()

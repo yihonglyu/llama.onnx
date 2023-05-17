@@ -12,6 +12,9 @@ class Decoder:
         assert os.path.isdir(onnxdir)
         self._pool = pool
 
+        self._pool.submit('llama-7b', os.path.join(onnxdir, 'llama-7b.onnx'))
+
+        """
         for idx in range(count):
             filepath = os.path.join(onnxdir, nameformat.format(idx))
             self._pool.submit('decode{}'.format(idx),filepath)
@@ -19,6 +22,13 @@ class Decoder:
         self._pool.submit('embed', os.path.join(onnxdir, 'embed.onnx'))
         self._pool.submit('norm', os.path.join(onnxdir, 'norm.onnx'))
         self._pool.submit('head', os.path.join(onnxdir, 'head.onnx'))
+        """
+
+    def llama_7b(self, input_ids: np.array):
+        handler = self._pool.fetch('llama-7b')
+        output = handler.forward({'input_ids': input_ids})['output']
+
+        return output
 
     def decode(self, _inputs: dict, idx: int):
         key = 'decode{}'.format(idx)
